@@ -1,0 +1,416 @@
+return (
+    <div className="w-full">
+      {/* Product Categories */}
+      <h1 className="text-3xl md:text-5xl lg:text-6xl font-semibold text-gray-900 mt-20 pt-12 text-center lg:text-left lg:ml-[160px]">
+        Product Categories
+      </h1>
+      <div className="lg:max-w-[calc(100%-320px)] mx-auto px-6 lg:px-0 py-10 grid grid-cols-1 md:grid-cols-2 gap-5">
+        {categories.map((category, index) => (
+          <ProductCategoryCard
+            key={index}
+            img={category.img}
+            title={category.title}
+            desc={category.desc}
+            link={category.link}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { useState, useEffect } from "react";
+import { useAppContext } from "../context/AppContext";
+import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
+
+const Hero = () => {
+  const { sliderImages } = useAppContext();
+  const [current, setCurrent] = useState(0);
+
+  // Next & Previous Slide Functions
+  const nextSlide = () =>
+    setCurrent((prev) => (prev + 1) % sliderImages.length);
+  const prevSlide = () =>
+    setCurrent(
+      (prev) => (prev - 1 + sliderImages.length) % sliderImages.length
+    );
+
+  // Auto-play using useEffect
+  useEffect(() => {
+    const interval = setInterval(nextSlide, 3000); // Change slide every 3 sec
+    return () => clearInterval(interval); // Clean up on unmount
+  }, []);
+
+  return (
+    <section className="relative w-full h-screen flex flex-col overflow-hidden">
+      {/* Slide Content */}
+      <div className="relative flex-grow flex items-center justify-center">
+        <button className="absolute left-4 text-3xl z-10" onClick={prevSlide}>
+          <FaChevronCircleLeft className="text-[#D40057] text-lg sm:text-xl md:text-2xl lg:text-3xl" />
+        </button>
+
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src={sliderImages[current].img}
+            alt={`Slide ${current + 1}`}
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        <button className="absolute right-4 text-3xl z-10" onClick={nextSlide}>
+          <FaChevronCircleRight className="text-[#D40057] text-lg sm:text-xl md:text-2xl lg:text-3xl" />
+        </button>
+      </div>
+
+      {/* Dots Navigation */}
+      <div className="absolute bottom-8 flex gap-2 z-10">
+        {sliderImages.map((_, index) => (
+          <div
+            key={index}
+            onClick={() => setCurrent(index)}
+            className={`w-3 h-3 rounded-full cursor-pointer transition ${
+              current === index ? "bg-[#D40057]" : "bg-gray-400"
+            }`}
+          ></div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+export default Hero;
+
+
+
+
+
+
+
+
+
+
+
+
+  if (!category) {
+    return (
+      <>
+        <Navbar />
+        <div className="text-center py-10">
+          <h1 className="text-3xl font-bold text-red-500">
+            Category Not Found
+          </h1>
+        </div>
+      </>
+    );
+  }
+
+
+
+
+
+  if (categoryIndex === -1) {
+    return (
+      <>
+        <Navbar />
+        <div className="text-center py-20">
+          <h1 className="text-3xl font-bold text-red-500">
+            Category Not Found
+          </h1>
+        </div>
+      </>
+    );
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+{randomProducts.length > 0 ? (
+            randomProducts.map((product, index) => (
+              <ProductsCard
+                key={index}
+                img={product.img}
+                title={product.name}
+                desc={product.desc}
+                category={matchedCategory}
+              />
+            ))
+          ) : (
+            <p className="text-gray-600">
+              No other products available for this category.
+            </p>
+          )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // Filter products belonging to the matched category, excluding the current product
+  const filteredProducts = products
+    .filter(
+      (product) =>
+        formatUrl(product.category) === formattedCategory &&
+        formatUrl(product.name) !== formatUrl(productName) // Exclude current product
+    )
+    .slice(0, 4); // Limit to 4
+
+
+
+
+
+
+
+
+    {
+    path: "/product/:productSlug",
+    element: <SingleProductPage />,
+  },
+
+
+
+
+
+
+           {/* Explore More Products Section (only if there are filtered products) */}
+      {filteredProducts.length > 0 && (
+        <div className="my-16 lg:ml-[160px]">
+          <h2 className="text-2xl font-bold text-gray-800">
+            Explore More Products
+          </h2>
+          <div className="flex gap-6 mt-6">
+            {filteredProducts.map((product, index) => {
+              return (
+                <ProductsCard
+                  key={index}
+                  img={product.img}
+                  title={product.title}
+                  desc={product.desc}
+                  category={product.category}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { useParams } from "react-router-dom";
+import { Footer, Navbar, ProductsCard } from "../components";
+import { useAppContext } from "../context/AppContext";
+
+// Function to convert category names into URL-friendly slugs
+// const formatUrl = (text) => text.toLowerCase().replace(/\s+/g, "-");
+const formatUrl = (str) => (str ? str.toLowerCase().replace(/\s+/g, "-") : "");
+
+const SingleProductPage = () => {
+  const { category_list, products } = useAppContext(); // Ensure products is always an array
+  const { productSlug } = useParams();
+
+  // Convert category list into slug format
+  const categorySlugs = category_list.reduce((acc, category) => {
+    acc[formatUrl(category)] = category; // Map slug -> original category
+    return acc;
+  }, {});
+
+  // Extract category from URL by matching the longest slug
+  const slugParts = productSlug.split("-");
+  let matchedCategorySlug = "";
+  let matchedCategory = "";
+
+  // const matchedCategory = categorySlugs[matchedCategorySlug] || null;
+
+  for (let i = slugParts.length; i > 0; i--) {
+    const possibleSlug = slugParts.slice(0, i).join("-");
+    if (categorySlugs[possibleSlug]) {
+      matchedCategorySlug = possibleSlug;
+      matchedCategory = categorySlugs[possibleSlug];
+      break;
+    }
+  }
+
+  // Extract product name (everything after the matched category)
+  const productName = productSlug
+    .replace(matchedCategorySlug + "-", "")
+    .replace(/-/g, " ");
+
+  // Find the current product
+  const currentProduct = products.find(
+    (product) => formatUrl(product.name) === formatUrl(productName)
+  );
+
+  // Get product image or a fallback placeholder
+  const productImage = currentProduct?.img;
+
+  // Only format if a valid category was found
+  const formattedCategory = matchedCategory ? formatUrl(matchedCategory) : "";
+
+  // Filter products belonging to the matched category, excluding the current product
+  const filteredProducts = products
+    .filter(
+      (product) =>
+        formatUrl(product.category) === formattedCategory &&
+        formatUrl(product.name) !== formatUrl(productName) // Exclude current product
+    )
+    .slice(0, 4); // Limit to 4
+
+  return (
+    <>
+      <Navbar />
+      {/** Main Product Display Section */}
+      <div className="flex flex-col md:flex-row h-screen p-6 lg:p-0 gap-8">
+        {/* Left Section */}
+        <div className="flex-1 flex flex-col lg:ml-[160px] lg:mt-[150px]">
+          <h1 className="text-3xl lg:text-5xl font-bold text-[#D40057] capitalize">
+            {productName}
+          </h1>
+          <p className="text-gray-600 text-sm mt-10 capitalize">
+            Product Category: <br />
+            <span className="text-lg font-semibold block mt-2">
+              {matchedCategory || "Unknown"}
+            </span>
+          </p>
+          <p className="mt-4 text-gray-700">
+            Product details will be displayed here...
+          </p>
+        </div>
+
+        {/* Right Section */}
+        <div className="flex-1 flex flex-col justify-center items-center mr-[160px]">
+          {/* Big Image Placeholder */}
+          <div className="w-full h-80 bg-gray-300 flex items-center justify-center">
+            <img src={productImage} alt="" />
+          </div>
+
+          {/* Small Image Thumbnails */}
+          <div className="flex gap-4 mt-4">
+            {[...Array(3)].map((_, index) => (
+              <div
+                key={index}
+                className="w-20 h-20 bg-gray-300 flex items-center justify-center"
+              >
+                <p className="text-gray-500">Image</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/** Overview Section */}
+      <div className="ml-[160px] mt-10">
+        <div className="flex gap-16">
+          <div>
+            <p className="font-semibold">Overview</p>
+            <p className="text-lg">
+              <strong>{matchedCategory || "Unknown"}</strong>
+            </p>
+          </div>
+          <p className="font-semibold">Features and Benefits</p>
+        </div>
+      </div>
+
+      {/* Explore More Products Section (only if there are filtered products) */}
+      {filteredProducts.length > 0 && (
+        <div className="my-16 lg:ml-[160px]">
+          <h2 className="text-2xl font-bold text-gray-800">
+            Explore More Products
+          </h2>
+          <div className="flex gap-6 mt-6">
+            {filteredProducts.map((product, index) => {
+              return (
+                <ProductsCard
+                  key={index}
+                  img={product.img}
+                  title={product.title}
+                  desc={product.desc}
+                  category={product.category}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <Footer />
+    </>
+  );
+};
+
+export default SingleProductPage;
+
+
+
+
+
+
+
+
+
+
+
+{/* Small Image Thumbnails */}
+              <div className="flex gap-4 mt-4">
+                {[...Array(3)].map((_, index) => (
+                  <div
+                    key={index}
+                    className="w-20 h-20 bg-gray-300 flex items-center justify-center"
+                  >
+                    <p className="text-gray-500">Image</p>
+                  </div>
+                ))}
+              </div>
+
+
+
+
+
+
+
+              
